@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
+import Form from './components/Form'
+import List from './components/Lists'
+import { Sub } from './components/types'
 
-interface Sub {
-  nick: string
-  avatar: string
-  subMonths: number
-  description?: string
+interface AppState {
+  subs: Array<Sub>
+  newSubsNumber: number
 }
 
 const INITIAL_STATE = [
@@ -23,27 +24,23 @@ const INITIAL_STATE = [
 ]
 
 function App() {
-  const [subs, setSubs] = useState<Array<Sub>>([])
+  const [subs, setSubs] = useState<AppState['subs']>([])
+  const [newSubsNumber, setNewSubsNumer] = useState<AppState['newSubsNumber']>(0)
+  const divRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setSubs(INITIAL_STATE)
   }, [])
  
+  const handleNewsub = (newSub: Sub): void => {
+    setSubs(sub => [...subs, newSub])
+  }
 
   return (
-    <div className="App">
+    <div className="App" ref={divRef}>
       <h3>Hola mundo desde React con TS</h3>
-      <ul>
-        {subs.map(sub => {
-          return(
-            <li key={sub.nick}>
-              <img src={sub.avatar} alt={sub.nick} />
-              <h4>{sub.nick} (<small>{sub.subMonths}</small>)</h4>
-              <p>{sub.description}</p>
-            </li>
-          )
-        })}
-      </ul>
+     <List subs={subs}/>
+     <Form onNewSub={handleNewsub}/>
     </div>
   )
 }
